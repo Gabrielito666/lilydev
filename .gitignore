@@ -1,0 +1,4 @@
+bin/lilydev
+node_modules/
+.env
+html/index.html

@@ -1,0 +1,37 @@
+[
+  {
+    "directory": "/home/gabrielito/proyectos/lilydev",
+    "command": "gcc -c -Iinclude main.c -o main.o",
+    "file": "/home/gabrielito/proyectos/lilydev/main.c"
+  },
+  {
+    "directory": "/home/gabrielito/proyectos/lilydev",
+    "command": "gcc -c -Iinclude src/parse-args.c -o parse-args.o",
+    "file": "/home/gabrielito/proyectos/lilydev/src/parse-args.c"
+  },
+  {
+    "directory": "/home/gabrielito/proyectos/lilydev",
+    "command": "gcc -c -Iinclude src/reload-results.c -o reload-results.o",
+    "file": "/home/gabrielito/proyectos/lilydev/src/reload-results.c"
+  },
+  {
+    "directory": "/home/gabrielito/proyectos/lilydev",
+    "command": "gcc -c -Iinclude src/watch.c -o watch.o",
+    "file": "/home/gabrielito/proyectos/lilydev/src/watch.c"
+  },
+  {
+    "directory": "/home/gabrielito/proyectos/lilydev",
+    "command": "gcc -c -Iinclude src/server.c -o server.o",
+    "file": "/home/gabrielito/proyectos/lilydev/src/server.c"
+  },
+  {
+    "directory": "/home/gabrielito/proyectos/lilydev",
+    "command": "gcc -c -Iinclude src/event-loop.c -o event-loop.o",
+    "file": "/home/gabrielito/proyectos/lilydev/src/event-loop.c"
+  },
+  {
+    "directory": "/home/gabrielito/proyectos/lilydev",
+    "command": "gcc -c -Iinclude src/compare-results.c -o compare-results.o",
+    "file": "/home/gabrielito/proyectos/lilydev/src/compare-results.c"
+  }
+]
