@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-	  "build-html": "node scripts/build-html.js"
+    "build-html": "node scripts/build-html.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@lek-js/lex": "^3.0.5"
+    "@lek-js/lex": "^3.0.5",
+    "pdfjs-dist": "^6.5.438"
   }
 }

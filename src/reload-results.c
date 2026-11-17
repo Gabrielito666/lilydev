@@ -31,8 +31,8 @@ static void sha1_hex(void* data, size_t len, char hex[41])
 	{
 		uint32_t w[80];
 		for (int i = 0; i < 16; i++)
-			w[i] = (msg[off + i * 2u] << 24) | (msg[off + i * 2u + 1] << 16)
-				 | (msg[off + i * 2u + 2] << 8) | msg[off + i * 2u + 3];
+			w[i] = (msg[off + i * 4u] << 24) | (msg[off + i * 4u + 1] << 16)
+				 | (msg[off + i * 4u + 2] << 8) | msg[off + i * 4u + 3];
 		for (int i = 16; i < 80; i++)
 			w[i] = rol(w[i - 3] ^ w[i - 8] ^ w[i - 14] ^ w[i - 16], 1);
 

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -40,16 +41,63 @@ static void* read_file(char* path, size_t* size)
 	return buffer;
 }
 
+static void json_escape(char* out, char* in)
+{
+	char* o = out;
+	for (char* p = in; *p; p++)
+	{
+		if (*p == '"' || *p == '\\') *o++ = '\\';
+		else if (*p == '\n') { *o++ = '\\'; *o++ = 'n'; continue; }
+		else if (*p == '\t') { *o++ = '\\'; *o++ = 't'; continue; }
+		else if (*p == '\r' || (unsigned char)*p < 0x20)
+			continue;
+		*o++ = *p;
+	}
+	*o = '\0';
+}
+
+static void update_files_json(Server* server, Results* results)
+{
+	char json[2048];
+	int o = snprintf(json, sizeof(json), "{\"pdfs\":[");
+
+	for (int pass = 0; pass < 2; pass++)
+	{
+		if (pass == 1)
+			o += snprintf(json + o, sizeof(json) - o, "],\"midis\":[");
+
+		int first = 1;
+		for (int i = 0; i < results->length; i++)
+		{
+			Result* r = results->list[i];
+			if ((pass == 0) != (r->type == PDF))
+				continue;
+			o += snprintf(json + o, sizeof(json) - o, "%s{\"name\":\"%s\",\"hash\":\"%s\"}",
+				first ? "" : ",", r->name, r->hash);
+			first = 0;
+		}
+	}
+
+	snprintf(json + o, sizeof(json) - o, "]}");
+	http_update_resource(server, "/files/", strdup(json), strlen(json), "application/json");
+}
+
 static void on_ly_change(void* _params)
 {
 	OnLyChangeParams* params = _params;
 
 	Results prev_results = *params->results;
 
+	ws_send(params->server, "{\"event\":\"compiling\"}");
+
 	char error[ERROR_SIZE];
 	if (reload_results(params->input, params->results, error) < 0)
 	{
-		ws_send(params->server, "{\"event\":\"error\"}");
+		char esc[ERROR_SIZE * 2];
+		char msg[ERROR_SIZE * 2 + 64];
+		json_escape(esc, error);
+		snprintf(msg, sizeof(msg), "{\"event\":\"error\",\"message\":\"%s\"}", esc);
+		ws_send(params->server, msg);
 		return;
 	}
 
@@ -63,20 +111,22 @@ static void on_ly_change(void* _params)
 		char path[600];
 		snprintf(path, sizeof(path), "/%s", ev->file->name);
 
-		char* type;
 		if (ev->type == REMOVED_FILE)
-		{
 			http_delete_resource(params->server, path);
-			type = "removed";
-		}
 		else
 		{
 			http_update_resource(params->server, path, ev->file->buffer, ev->file->size,
 				ev->file->type == PDF ? "application/pdf" : "audio/midi");
 			ev->file->buffer = NULL;
-			type = ev->type == NEW_FILE ? "new" : "updated";
 		}
+	}
 
+	update_files_json(params->server, params->results);
+
+	for (int i = 0; i < change_events.length; i++)
+	{
+		ChangeEvent* ev = &change_events.list[i];
+		char* type = ev->type == NEW_FILE ? "new" : ev->type == UPDATED_FILE ? "updated" : "removed";
 		char msg[256];
 		snprintf(msg, sizeof(msg), "{\"event\":\"%s\",\"file\":\"%s\"}", type, ev->file->name);
 		ws_send(params->server, msg);
@@ -125,6 +175,8 @@ int main(int argc, char* argv[])
 	if (index)
 		http_add_resource(server, "/", index, index_size, "text/html");
 
+	update_files_json(server, &results);
+
 	char error[ERROR_SIZE];
 	if (reload_results(args.INPUT, &results, error) == 0)
 	{
@@ -140,6 +192,8 @@ int main(int argc, char* argv[])
 	}
 	else
 		fprintf(stderr, "%s\n", error);
+
+	update_files_json(server, &results);
 
 	OnLyChangeParams on_ly_change_params = {
 		.input = args.INPUT,
