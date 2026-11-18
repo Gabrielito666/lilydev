@@ -2,3 +2,11 @@ bin/lilydev
 node_modules/
 .env
 html/index.html
+*.deb
+*.buildinfo
+*.changes
+debian/lilydev/
+debian/.debhelper/
+debian/files
+dist/lilydev_*
+dist/lilydev-*

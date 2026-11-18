@@ -155,7 +155,7 @@ int main(int argc, char* argv[])
 	Args args = { .PORT = DEFAULT_PORT, .INPUT = DEFAULT_INPUT };
 	if (parse_args(&args, argc, argv) < 0)
 	{
-		fprintf(stderr, "Use: %s [-p|--port <puerto>] [input]\n", argv[0]);
+		fprintf(stderr, "Usage: %s [-p|--port <port>] [input]\n", argv[0]);
 		exit(1);
 	}
 
@@ -166,14 +166,15 @@ int main(int argc, char* argv[])
 
 	char* index_path = getenv("LILYDEV_HTML");
 	if (!index_path)
-	{
-		fprintf(stderr, "Falta la variable de entorno LILYDEV_HTML\n");
-		exit(1);
-	}
+		index_path = "/usr/share/lilydev/index.html";
 	size_t index_size;
 	void* index = read_file(index_path, &index_size);
-	if (index)
-		http_add_resource(server, "/", index, index_size, "text/html");
+	if (!index)
+	{
+		fprintf(stderr, "No index.html found at %s\n", index_path);
+		exit(1);
+	}
+	http_add_resource(server, "/", index, index_size, "text/html");
 
 	update_files_json(server, &results);
 

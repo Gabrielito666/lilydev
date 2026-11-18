@@ -1,0 +1,7 @@
+lilydev (0.1.0) unstable; urgency=medium
+
+  * First functional version: live lilypond compilation, PDF viewer
+    (pdf.js canvas, horizontal scroll), MIDI synth (WebAudio),
+    WebSocket hot-reload.
+
+ -- Gabriel Antonio Farías Ravanal <galileo.fandango@gmail.com>  Wed, 18 Nov 2026 12:00:00 +0000

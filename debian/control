@@ -1,0 +1,14 @@
+Source: lilydev
+Maintainer: Gabriel Antonio Farías Ravanal <galileo.fandango@gmail.com>
+Build-Depends: debhelper-compat (= 13), nodejs
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: lilydev
+Architecture: any
+Section: sound
+Depends: ${shlibs:Depends}, ${misc:Depends}, lilypond, ghostscript
+Description: live LilyPond score viewer with hot-reload web UI
+ Local web server that compiles .ly files with LilyPond and serves the
+ resulting PDF (canvas viewer with zoom) and MIDI (WebAudio synth with
+ play/pause/seek/volume) with live reload over WebSocket.

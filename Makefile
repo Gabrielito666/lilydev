@@ -18,7 +18,13 @@ html:
 dev: bin/lilydev html/index.html
 	LILYDEV_HTML=./html/index.html ./bin/lilydev ./fixture.ly
 
-clean:
-	rm -rf bin html
+deb: bin/lilydev html/index.html
+	rm -f debian/files
+	dpkg-buildpackage -b -nc -uc -us
+	mkdir -p dist
+	-mv ../lilydev_* ../lilydev-* dist/ 2>/dev/null || true
 
-.PHONY: all dev clean html
+clean:
+	rm -rf bin html dist
+
+.PHONY: all dev clean html deb

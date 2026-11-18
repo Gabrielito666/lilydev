@@ -103,7 +103,7 @@ int reload_results(char* input, Results* results, char* error)
 	char tmpdir[] = "/tmp/lilypond_XXXXXX";
 	if (!mkdtemp(tmpdir))
 	{
-		snprintf(error, ERROR_SIZE, "mkdtemp fallo");
+		snprintf(error, ERROR_SIZE, "mkdtemp failed");
 		return -1;
 	}
 
@@ -136,7 +136,7 @@ int reload_results(char* input, Results* results, char* error)
 
 	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
 	{
-		if (!n) snprintf(error, ERROR_SIZE, "fallo lilypond");
+		if (!n) snprintf(error, ERROR_SIZE, "lilypond failed");
 		clean_dir(tmpdir);
 		return -1;
 	}
