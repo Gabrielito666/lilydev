@@ -64,6 +64,8 @@ async function showPdf()
 	}
 
 	const holder = refs.pages.current;
+	const prevTop = refs.scroll.current.scrollTop;
+	const prevLeft = refs.scroll.current.scrollLeft;
 	holder.innerHTML = "";
 
 	if (!state.pdf) return;
@@ -97,6 +99,7 @@ async function showPdf()
 			canvas.width = Math.floor(vp.width);
 			canvas.height = Math.floor(vp.height);
 			canvas.dataset.w = String(Math.floor(vp.width / 2));
+			canvas.style.width = Math.round(parseInt(canvas.dataset.w) * state.zoom) + "px";
 			holder.appendChild(canvas);
 			if (n == 1) state.baseH = vp.height / 2;
 
@@ -109,6 +112,8 @@ async function showPdf()
 	}
 
 	applyZoom();
+	refs.scroll.current.scrollTop = prevTop;
+	refs.scroll.current.scrollLeft = prevLeft;
 }
 
 function fillOptions(select, files, current)
