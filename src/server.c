@@ -217,9 +217,12 @@ void server_on_readable(void* self, int fd)
 			   O_NONBLOCK. Turn it off (with timeouts) so that the send
 			   loop in http_respond can transfer large files completely */
 			fcntl(client, F_SETFL, 0);
-			struct timeval tv = { .tv_sec = 10, .tv_usec = 0 };
-			setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
-			setsockopt(client, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
+			/* Reading a request header must be quick; writing a big body
+			   (the 32 MB soundfont) to a slow client on Wi-Fi is not */
+			struct timeval rtv = { .tv_sec = 10, .tv_usec = 0 };
+			setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, &rtv, sizeof(rtv));
+			struct timeval stv = { .tv_sec = 120, .tv_usec = 0 };
+			setsockopt(client, SOL_SOCKET, SO_SNDTIMEO, &stv, sizeof(stv));
 			handle_request(server, client);
 		}
 		return;
@@ -248,7 +251,11 @@ static void send_all(int client, void* buffer, size_t size)
 		if (w > 0) { p += w; left -= w; continue; }
 		if (w < 0 && errno == EINTR)
 			continue;
-		return; /* timeout or error: drop the rest of the response */
+		/* SO_SNDTIMEO expired (client stalled) or connection gone:
+		   never drop bytes of a large body silently */
+		fprintf(stderr, "http: client stalled or gone, dropping %zu of %zu response bytes\n",
+			left, size);
+		return;
 	}
 }
 

@@ -11,6 +11,12 @@ lilydev (0.1.4) unstable; urgency=medium
     ./html directly).
   * Fix large HTTP responses being truncated: http_respond() now loops
     until the whole body is sent (required for the ~32 MB soundfont).
+  * Fix playback on devices reached over LAN (plain http = insecure
+    context, Chromium hides audioWorklet there): added a main-thread
+    spessasynth_core engine driven by ScriptProcessorNode as a second
+    choice, so the soundfont still plays; the square-wave synth only
+    runs when no soundfont is served at all. Error messages now say
+    what actually failed.
 
  -- Gabriel Antonio Farías Ravanal <galileo.fandango@gmail.com>  Tue, 24 Nov 2026 21:40:00 +0000
 
