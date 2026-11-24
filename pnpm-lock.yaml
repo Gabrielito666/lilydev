@@ -14,6 +14,12 @@ importers:
       pdfjs-dist:
         specifier: ^6.5.438
         version: 6.5.438
+      spessasynth_core:
+        specifier: ^4.4.12
+        version: 4.4.12
+      spessasynth_lib:
+        specifier: ^4.4.10
+        version: 4.4.10
 
 packages:
 
@@ -315,6 +321,9 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  fflate@0.8.3:
+    resolution: {integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==}
+
   html-encoding-sniffer@4.0.0:
     resolution: {integrity: sha512-Y22oTqIU4uuPgEemfz7NDJz6OeKf12Lsu+QC+s3BVpda64lTiMYCyGwg5ki4vFxkMwQdeZDl2adZoqUgdFuTgQ==}
     engines: {node: '>=18'}
@@ -372,6 +381,16 @@ packages:
   saxes@6.0.0:
     resolution: {integrity: sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA==}
     engines: {node: '>=v12.22.7'}
+
+  spessasynth_core@4.4.12:
+    resolution: {integrity: sha512-/22ca0JyT6nGe8lF4hdg0WoHlzkJyM+Yu6jWjuKxk/UcgQF2OCpbC4tZs1g5OTAjBcMeUmoKIFfYQ2wAokETew==}
+
+  spessasynth_lib@4.4.10:
+    resolution: {integrity: sha512-/D6epXH1HMXWHN6MkENqNN8mFoVedygsvCnbeGn0WYzQbbqvbw3JFSS2e4o2opIkwAuQAzg2mcPh8TmYqGYxDA==}
+
+  stb-vorbis@0.0.8:
+    resolution: {integrity: sha512-Ie2aMUt/su9FkfDefNy0Zmbx1U3/UO8MQU0vpdPfrymgGL4DaWXt17aT6KX7ZjrpLHicij4x+e3pTtGQEP3duw==}
+    engines: {node: '>=18'}
 
   symbol-tree@3.2.4:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
@@ -646,6 +665,8 @@ snapshots:
       '@esbuild/win32-ia32': 0.25.12
       '@esbuild/win32-x64': 0.25.12
 
+  fflate@0.8.3: {}
+
   html-encoding-sniffer@4.0.0:
     dependencies:
       whatwg-encoding: 3.1.1
@@ -720,6 +741,17 @@ snapshots:
   saxes@6.0.0:
     dependencies:
       xmlchars: 2.2.0
+
+  spessasynth_core@4.4.12:
+    dependencies:
+      fflate: 0.8.3
+      stb-vorbis: 0.0.8
+
+  spessasynth_lib@4.4.10:
+    dependencies:
+      spessasynth_core: 4.4.12
+
+  stb-vorbis@0.0.8: {}
 
   symbol-tree@3.2.4: {}
 

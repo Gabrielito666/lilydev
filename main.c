@@ -176,6 +176,34 @@ int main(int argc, char* argv[])
 	}
 	http_add_resource(server, "/", index, index_size, "text/html");
 
+	/* AudioWorklet processor for the MIDI player, stored next to index.html */
+	char synth_js_path[1024];
+	char* slash = strrchr(index_path, '/');
+	if (slash)
+	{
+		snprintf(synth_js_path, sizeof(synth_js_path), "%.*s/synth.js",
+			(int)(slash - index_path), index_path);
+	}
+	else
+		snprintf(synth_js_path, sizeof(synth_js_path), "synth.js");
+	size_t synth_js_size;
+	void* synth_js = read_file(synth_js_path, &synth_js_size);
+	if (synth_js)
+		http_add_resource(server, "/synth.js", synth_js, synth_js_size, "application/javascript");
+	else
+		fprintf(stderr, "No synth.js found at %s\n", synth_js_path);
+
+	/* SoundFont for the MIDI player */
+	char* soundfont_path = getenv("LILYDEV_SOUNDFONT");
+	if (!soundfont_path)
+		soundfont_path = "/usr/share/lilydev/sounds/GeneralUser-GS.sf2";
+	size_t soundfont_size;
+	void* soundfont = read_file(soundfont_path, &soundfont_size);
+	if (soundfont)
+		http_add_resource(server, "/soundfont.sf2", soundfont, soundfont_size, "application/octet-stream");
+	else
+		fprintf(stderr, "No soundfont found at %s, the MIDI player will fall back to the basic synth\n", soundfont_path);
+
 	update_files_json(server, &results);
 
 	char error[ERROR_SIZE];

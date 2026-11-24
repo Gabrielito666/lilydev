@@ -2,11 +2,14 @@ bin/lilydev
 node_modules/
 .env
 html/index.html
+html/synth.js
+sounds/
 *.deb
 *.buildinfo
 *.changes
 debian/lilydev/
 debian/.debhelper/
+debian/lilydev.debhelper.log
 debian/files
 dist/lilydev_*
 dist/lilydev-*

@@ -3,7 +3,7 @@ CFLAGS = -Wall -Iinclude
 SRC = main.c $(wildcard src/*.c)
 LEX_SRC = $(wildcard views/*) scripts/build-html.js
 
-all: bin/lilydev html/index.html
+all: bin/lilydev html/index.html html/synth.js
 
 bin/lilydev: $(SRC)
 	mkdir -p bin
@@ -12,13 +12,16 @@ bin/lilydev: $(SRC)
 html/index.html: $(LEX_SRC)
 	pnpm run build-html
 
-html:
-	pnpm run build-html
+html/synth.js: node_modules/spessasynth_lib/dist/spessasynth_processor.min.js
+	mkdir -p html
+	cp $< $@
 
-dev: bin/lilydev html/index.html
-	LILYDEV_HTML=./html/index.html ./bin/lilydev ./fixture.ly
+html: html/index.html html/synth.js
 
-deb: bin/lilydev html/index.html
+dev: bin/lilydev html/index.html html/synth.js
+	LILYDEV_HTML=./html/index.html LILYDEV_SOUNDFONT=./sounds/GeneralUser-GS.sf2 ./bin/lilydev ./fixture.ly
+
+deb: bin/lilydev html/index.html html/synth.js
 	rm -f debian/files
 	dpkg-buildpackage -b -nc -uc -us
 	mkdir -p dist

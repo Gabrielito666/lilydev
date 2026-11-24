@@ -6,6 +6,26 @@ Files: *
 Copyright: 2026 Gabriel Antonio Farías Ravanal <galileo.fandango@gmail.com>
 License: MIT
 
+Files: html/synth.js
+Copyright: 2024-2026 Spessasus
+License: Apache-2.0
+
+ The bundled JavaScript (html/index.html) also links code from the
+ spessasynth_lib and spessasynth_core npm packages:
+ .
+ Copyright 2024-2026 Spessasus, Apache License 2.0.
+
+Files: sounds/* /usr/share/lilydev/sounds/*
+Copyright: S. Christian Collins
+License: GeneralUser-GS
+
+ GeneralUser GS (https://www.schristiancollins.com/generaluser) may be
+ freely used and redistributed provided the file is not modified and
+ proper credit is given. The full license text is embedded inside the
+ .sf2 file (legal info chunk) and available at:
+ .
+ https://www.schristiancollins.com/generaluser
+
 License: MIT
  Permission is hereby granted, free of charge, to any person obtaining a
  copy of this software and associated documentation files (the

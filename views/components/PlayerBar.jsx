@@ -1,6 +1,6 @@
 import Lex from "@lek-js/lex";
 
-const PlayerBar = ({ section, playBtn, track, fill, timeLabel, onToggle, onSeek, onVolume }) =>
+const PlayerBar = ({ section, playBtn, track, fill, timeLabel, loadLabel, onToggle, onSeek, onVolume }) =>
 {
 	return <section id="player" ref={section} hidden>
 		<button ref={playBtn} onClick={() => onToggle()}>&#9654;</button>
@@ -8,6 +8,7 @@ const PlayerBar = ({ section, playBtn, track, fill, timeLabel, onToggle, onSeek,
 			<div id="fill" ref={fill}></div>
 		</div>
 		<span id="time" ref={timeLabel}>0.0s</span>
+		<span id="loading" ref={loadLabel} hidden></span>
 		<label id="vol">
 			<span>vol</span>
 			<input type="range" min="0" max="150" value="100"

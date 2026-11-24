@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <netinet/in.h>
 
 #define MAX_RESOURCES 32
@@ -211,7 +212,16 @@ void server_on_readable(void* self, int fd)
 	{
 		int client;
 		while ((client = accept(fd, NULL, NULL)) >= 0)
+		{
+			/* The listen fd is non-blocking, so accepted sockets inherit
+			   O_NONBLOCK. Turn it off (with timeouts) so that the send
+			   loop in http_respond can transfer large files completely */
+			fcntl(client, F_SETFL, 0);
+			struct timeval tv = { .tv_sec = 10, .tv_usec = 0 };
+			setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+			setsockopt(client, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
 			handle_request(server, client);
+		}
 		return;
 	}
 
@@ -228,6 +238,20 @@ void server_on_readable(void* self, int fd)
 		ws_detach(server, fd);
 }
 
+static void send_all(int client, void* buffer, size_t size)
+{
+	unsigned char* p = buffer;
+	size_t left = size;
+	while (left)
+	{
+		ssize_t w = send(client, p, left, MSG_NOSIGNAL);
+		if (w > 0) { p += w; left -= w; continue; }
+		if (w < 0 && errno == EINTR)
+			continue;
+		return; /* timeout or error: drop the rest of the response */
+	}
+}
+
 static void http_respond(int client, char* status, char* content_type, void* buffer, size_t size)
 {
 	char hdr[512];
@@ -236,9 +260,9 @@ static void http_respond(int client, char* status, char* content_type, void* buf
 		"Content-Type: %s\r\n"
 		"Content-Length: %zu\r\n"
 		"Connection: close\r\n\r\n", status, content_type, size);
-	send(client, hdr, n, MSG_MORE);
+	send_all(client, hdr, n);
 	if (buffer && size)
-		send(client, buffer, size, MSG_NOSIGNAL);
+		send_all(client, buffer, size);
 	close(client);
 }
 

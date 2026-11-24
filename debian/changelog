@@ -1,3 +1,19 @@
+lilydev (0.1.4) unstable; urgency=medium
+
+  * MIDI playback now uses a real soundfont: the square-wave WebAudio
+    synth was replaced by SpessaSynth (AudioWorklet) + GeneralUser GS,
+    served locally. Correct GM instruments, percussion, velocity and
+    sustain. The old synth remains as automatic fallback when no
+    soundfont is available.
+  * Ship GeneralUser GS in /usr/share/lilydev/sounds/ and the worklet
+    processor in /usr/share/lilydev/synth.js; LILYDEV_SOUNDFONT and
+    LILYDEV_HTML override their paths (make dev uses ./sounds and
+    ./html directly).
+  * Fix large HTTP responses being truncated: http_respond() now loops
+    until the whole body is sent (required for the ~32 MB soundfont).
+
+ -- Gabriel Antonio Farías Ravanal <galileo.fandango@gmail.com>  Tue, 24 Nov 2026 21:40:00 +0000
+
 lilydev (0.1.3) unstable; urgency=medium
 
   * UX: hot-reload now preserves the PDF view: zoom and scroll

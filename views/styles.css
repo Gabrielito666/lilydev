@@ -46,6 +46,12 @@ body {
 	color: #777;
 }
 
+#loading {
+	color: #777;
+	font-style: italic;
+	font-size: 0.85em;
+}
+
 #vol {
 	display: flex;
 	align-items: center;

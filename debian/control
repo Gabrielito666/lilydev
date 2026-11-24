@@ -10,5 +10,6 @@ Section: sound
 Depends: ${shlibs:Depends}, ${misc:Depends}, lilypond, ghostscript
 Description: live LilyPond score viewer with hot-reload web UI
  Local web server that compiles .ly files with LilyPond and serves the
- resulting PDF (canvas viewer with zoom) and MIDI (WebAudio synth with
- play/pause/seek/volume) with live reload over WebSocket.
+ resulting PDF (canvas viewer with zoom) and MIDI (soundfont player
+ based on SpessaSynth + GeneralUser GS, with play/pause/seek/volume)
+ with live reload over WebSocket.

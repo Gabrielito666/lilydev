@@ -6,8 +6,17 @@ export DEB_BUILD_OPTIONS := noautodbgsym
 	dh $@
 
 override_dh_auto_build:
-	@if [ ! -f html/index.html ]; then \
+	@if [ ! -f html/index.html ] || [ ! -f html/synth.js ]; then \
 		[ -d node_modules ] || pnpm install --frozen-lockfile; \
-		$(MAKE) html/index.html; \
+		$(MAKE) html/index.html html/synth.js; \
 	fi
 	$(MAKE) bin/lilydev
+
+override_dh_install:
+	dh_install
+	@if ls sounds/*.sf2 >/dev/null 2>&1; then \
+		mkdir -p debian/lilydev/usr/share/lilydev/sounds; \
+		cp sounds/*.sf2 debian/lilydev/usr/share/lilydev/sounds/; \
+	else \
+		echo "WARNING: no sounds/*.sf2 found; the package ships without a soundfont"; \
+	fi

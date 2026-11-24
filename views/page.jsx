@@ -13,6 +13,7 @@ const refs = {
 	track: { current: null },
 	fill: { current: null },
 	timeLabel: { current: null },
+	loadLabel: { current: null },
 	selectors: { current: null },
 	pdfSelect: { current: null },
 	midiSelect: { current: null },
@@ -232,7 +233,12 @@ Lex.useClient(async () =>
 	await import("pdfjs-dist/legacy/build/pdf.worker.min.mjs");
 	state.pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
 
-	state.synth = createSynth();
+	state.synth = createSynth((msg) =>
+	{
+		if (!refs.loadLabel.current) return;
+		refs.loadLabel.current.hidden = !msg;
+		refs.loadLabel.current.textContent = msg || "";
+	});
 	refresh();
 
 	setInterval(() =>
@@ -279,6 +285,7 @@ const Page = () =>
 			track={refs.track}
 			fill={refs.fill}
 			timeLabel={refs.timeLabel}
+			loadLabel={refs.loadLabel}
 			onToggle={toggle}
 			onSeek={seek}
 			onVolume={(v) => state.synth.setVolume(v)} />
