@@ -1,3 +1,10 @@
+lilydev (0.1.1) unstable; urgency=medium
+
+  * Fix hot-reload: .ily files now trigger recompilation too, not just
+    the main .ly file.
+
+ -- Gabriel Antonio Farías Ravanal <galileo.fandango@gmail.com>  Tue, 24 Nov 2026 12:40:00 +0000
+
 lilydev (0.1.0) unstable; urgency=medium
 
   * First functional version: live lilypond compilation, PDF viewer

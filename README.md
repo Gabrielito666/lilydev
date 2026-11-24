@@ -18,18 +18,19 @@ cd lilydev
 make deb
 ```
 
-The package lands next to the repo: `../lilydev_0.1.0_amd64.deb`.
+The package lands next to the repo: `../lilydev_0.1.1_amd64.deb`.
 
 ## Install & use (Debian)
 
 ```sh
-sudo apt install ../lilydev_0.1.0_amd64.deb
+sudo apt install ../lilydev_0.1.1_amd64.deb
 cd your-project
 lilydev piece.ly
 ```
 
 Open `http://localhost:8080`. LilyDev watches the current directory
-recursively; saving any `.ly` triggers a recompile and a live reload.
+recursively; saving any `.ly` or `.ily` triggers a recompile and a live
+reload.
 Use `-p`/`--port` to change the port.
 
 ## Next steps
