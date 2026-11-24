@@ -7,8 +7,10 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/inotify.h>
+#include <poll.h>
 
 #define MAX_WATCHES 1024
+#define DEBOUNCE_MS 200
 
 struct Watcher {
 	int fd;
@@ -62,10 +64,9 @@ int watch_fds(void* self, int* out, int max)
 	return 1;
 }
 
-void watch_ready(void* self, int fd)
+static int read_events(Watcher* w, int fd)
 {
-	Watcher* w = self;
-
+	int relevant = 0;
 	unsigned char buf[4096] __attribute__((aligned(__alignof__(struct inotify_event))));
 	int len;
 	while ((len = read(fd, buf, sizeof(buf))) > 0)
@@ -84,7 +85,29 @@ void watch_ready(void* self, int fd)
 			}
 			else if ((has_ext(e->name, ".ly") || has_ext(e->name, ".ily")) &&
 				(e->mask & (IN_CREATE | IN_MODIFY | IN_DELETE | IN_MOVED_TO | IN_MOVED_FROM)))
-				w->on_ly_change(w->params);
+				relevant = 1;
 		}
 	}
+	return relevant;
+}
+
+void watch_ready(void* self, int fd)
+{
+	Watcher* w = self;
+
+	int dirty = read_events(w, fd);
+
+	/* Coalesce bursts of events (editors fire several per save):
+	   keep reading until the directory is quiet for DEBOUNCE_MS */
+	for (;;)
+	{
+		struct pollfd pfd = { .fd = fd, .events = POLLIN };
+		if (poll(&pfd, 1, DEBOUNCE_MS) <= 0)
+			break;
+		if (read_events(w, fd))
+			dirty = 1;
+	}
+
+	if (dirty)
+		w->on_ly_change(w->params);
 }

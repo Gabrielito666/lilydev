@@ -18,12 +18,12 @@ cd lilydev
 make deb
 ```
 
-The package lands next to the repo: `../lilydev_0.1.1_amd64.deb`.
+The package lands next to the repo: `../lilydev_0.1.2_amd64.deb`.
 
 ## Install & use (Debian)
 
 ```sh
-sudo apt install ../lilydev_0.1.1_amd64.deb
+sudo apt install ../lilydev_0.1.2_amd64.deb
 cd your-project
 lilydev piece.ly
 ```
