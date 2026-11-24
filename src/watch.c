@@ -82,7 +82,7 @@ void watch_ready(void* self, int fd)
 				snprintf(path, sizeof(path), "%s/%s", watched[e->wd], e->name);
 				add_watch(fd, path);
 			}
-			else if (has_ext(e->name, ".ly") &&
+			else if ((has_ext(e->name, ".ly") || has_ext(e->name, ".ily")) &&
 				(e->mask & (IN_CREATE | IN_MODIFY | IN_DELETE | IN_MOVED_TO | IN_MOVED_FROM)))
 				w->on_ly_change(w->params);
 		}
