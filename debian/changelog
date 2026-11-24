@@ -1,3 +1,11 @@
+lilydev (0.1.3) unstable; urgency=medium
+
+  * UX: hot-reload now preserves the PDF view: zoom and scroll
+    position (vertical and horizontal) are captured right before the
+    re-render and restored once the new pages are drawn.
+
+ -- Gabriel Antonio Farías Ravanal <galileo.fandango@gmail.com>  Tue, 24 Nov 2026 14:40:00 +0000
+
 lilydev (0.1.2) unstable; urgency=medium
 
   * Perf: debounce file-watch events. Editors fire several inotify

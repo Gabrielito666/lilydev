@@ -63,10 +63,11 @@ async function showPdf()
 		state.task = null;
 	}
 
-	const holder = refs.pages.current;
-	holder.innerHTML = "";
-
-	if (!state.pdf) return;
+	if (!state.pdf)
+	{
+		refs.pages.current.replaceChildren();
+		return;
+	}
 
 	const task = state.pdfjs.getDocument({ url: url(state.pdf) });
 	state.task = task;
@@ -87,20 +88,29 @@ async function showPdf()
 		return;
 	}
 
+	/* Double buffering: render every page into a detached fragment so
+	   the old PDF stays on screen until the new one is fully ready,
+	   then swap atomically (no blank flash) */
+	const frag = document.createDocumentFragment();
+
 	try
 	{
 		for (let n = 1; n <= doc.numPages; n++)
 		{
+			if (token != state.renderToken)
+				return;
+
 			const page = await doc.getPage(n);
 			const vp = page.getViewport({ scale: 2 });
 			const canvas = <canvas></canvas>;
 			canvas.width = Math.floor(vp.width);
 			canvas.height = Math.floor(vp.height);
 			canvas.dataset.w = String(Math.floor(vp.width / 2));
-			holder.appendChild(canvas);
+			canvas.style.width = Math.round(parseInt(canvas.dataset.w) * state.zoom) + "px";
 			if (n == 1) state.baseH = vp.height / 2;
 
 			await page.render({ canvas, viewport: vp }).promise;
+			frag.appendChild(canvas);
 		}
 	}
 	catch
@@ -108,7 +118,15 @@ async function showPdf()
 		return;
 	}
 
+	if (token != state.renderToken)
+		return;
+
+	const prevTop = refs.scroll.current.scrollTop;
+	const prevLeft = refs.scroll.current.scrollLeft;
+	refs.pages.current.replaceChildren(frag);
 	applyZoom();
+	refs.scroll.current.scrollTop = prevTop;
+	refs.scroll.current.scrollLeft = prevLeft;
 }
 
 function fillOptions(select, files, current)
@@ -147,9 +165,38 @@ function pick(files, current)
 	return files.find((f) => f.name == current?.name) ?? files[0] ?? null;
 }
 
+async function fetchFiles()
+{
+	return await (await fetch("/files/")).json();
+}
+
+async function refreshPdf()
+{
+	const data = await fetchFiles();
+	state.pdfs = data.pdfs;
+	state.pdf = pick(state.pdfs, state.pdf);
+
+	refs.viewer.current.hidden = state.pdfs.length == 0;
+	refs.selectors.current.hidden = state.pdfs.length < 2 && state.midis.length < 2;
+	fillOptions(refs.pdfSelect.current, state.pdfs, state.pdf);
+	showPdf();
+}
+
+async function refreshMidi()
+{
+	const data = await fetchFiles();
+	state.midis = data.midis;
+	state.midi = pick(state.midis, state.midi);
+
+	refs.player.current.hidden = state.midis.length == 0;
+	refs.selectors.current.hidden = state.pdfs.length < 2 && state.midis.length < 2;
+	fillOptions(refs.midiSelect.current, state.midis, state.midi);
+	loadMidi();
+}
+
 async function refresh()
 {
-	const data = await (await fetch("/files/")).json();
+	const data = await fetchFiles();
 	state.pdfs = data.pdfs;
 	state.midis = data.midis;
 	state.pdf = pick(state.pdfs, state.pdf);
@@ -212,7 +259,12 @@ Lex.useClient(async () =>
 			return;
 		}
 		refs.status.current.hidden = true;
-		refresh();
+		if (m.file && m.file.endsWith(".pdf"))
+			refreshPdf();
+		else if (m.file)
+			refreshMidi();
+		else
+			refresh();
 	};
 });
 
