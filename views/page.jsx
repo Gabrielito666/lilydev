@@ -8,6 +8,7 @@ const refs = {
 	viewer: { current: null },
 	scroll: { current: null },
 	pages: { current: null },
+	darkInput: { current: null },
 	player: { current: null },
 	playBtn: { current: null },
 	track: { current: null },
@@ -32,7 +33,19 @@ const state = {
 	task: null,
 	renderToken: 0,
 	pdfjs: null,
+	dark: false,
 };
+
+const darkKey = "lilydev-dark";
+
+function setDark(on)
+{
+	state.dark = on;
+	localStorage.setItem(darkKey, on ? "1" : "0");
+	document.documentElement.classList.toggle("dark", on);
+	if (refs.darkInput.current)
+		refs.darkInput.current.checked = on;
+}
 
 function url(f)
 {
@@ -230,6 +243,8 @@ function paintPlayer()
 
 Lex.useClient(async () =>
 {
+	setDark(localStorage.getItem(darkKey) == "1");
+
 	await import("pdfjs-dist/legacy/build/pdf.worker.min.mjs");
 	state.pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
 
@@ -294,7 +309,9 @@ const Page = () =>
 			section={refs.viewer}
 			scroll={refs.scroll}
 			pages={refs.pages}
-			onZoom={zoomBy} />
+			darkInput={refs.darkInput}
+			onZoom={zoomBy}
+			onDark={setDark} />
 
 		<FileSelectors
 			section={refs.selectors}

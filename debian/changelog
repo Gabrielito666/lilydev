@@ -1,3 +1,17 @@
+lilydev (0.1.5) unstable; urgency=medium
+
+  * UX: dark mode for the PDF viewer. A small switch in the top-right
+    of the toolbar inverts the rendered pages (black paper, soft
+    white ink) entirely in the browser via CSS filters; the PDFs on
+    disk are untouched. The choice is stored in localStorage under
+    the shared key "lilydev-dark", so any other music project on the
+    same origin can read and reuse it. Defaults to light mode.
+  * The inversion is tuned with contrast()/brightness() so the paper
+    lands on the app's own gray (~#131313) instead of harsh pure
+    black, and the gutter between pages follows.
+
+ -- Gabriel Antonio Farías Ravanal <galileo.fandango@gmail.com>  Tue, 24 Nov 2026 23:30:00 +0000
+
 lilydev (0.1.4) unstable; urgency=medium
 
   * MIDI playback now uses a real soundfont: the square-wave WebAudio

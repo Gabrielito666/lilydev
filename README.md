@@ -21,13 +21,13 @@ curl -L -o sounds/GeneralUser-GS.sf2 \
 make deb
 ```
 
-The package lands next to the repo: `../lilydev_0.1.4_amd64.deb`.
+The package lands next to the repo: `../lilydev_0.1.5_amd64.deb`.
 It includes the GeneralUser GS soundfont, so the .deb is ~32 MB.
 
 ## Install & use (Debian)
 
 ```sh
-sudo apt install ../lilydev_0.1.4_amd64.deb
+sudo apt install ../lilydev_0.1.5_amd64.deb
 cd your-project
 lilydev piece.ly
 ```
